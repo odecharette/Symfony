@@ -1,0 +1,19 @@
+
+{% extends "OCCoreBundle::layout.html.twig" %}
+
+{% block title %}
+  Home Page - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+  {# On définit un sous-titre commun à toutes les pages du bundle, par exemple #}
+  <h1>Accueil</h1>
+
+  <hr>
+
+  <h2>Les 3 dernières annonces</h2>
+  {{ render(controller("OCPlatformBundle:Advert:menu", {'limit': 3})) }}
+
+
+{% endblock %}
