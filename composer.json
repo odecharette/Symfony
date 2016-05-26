@@ -1,5 +1,6 @@
 {
     "name": "olivia/symfony",
+    "description": "Cours OC sur symfony",
     "license": "proprietary",
     "type": "project",
     "autoload": {

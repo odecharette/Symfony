@@ -30,4 +30,5 @@ oc_platform_delete:
     defaults:
         _controller: OCPlatformBundle:Advert:delete
     requirements:
-      id: \d+        
+      id: \d+       
+ 
