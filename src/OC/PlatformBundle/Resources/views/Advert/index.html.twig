@@ -9,15 +9,22 @@
   <ul>
     {% for advert in listAdverts %}
       <li>
-        <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">
-          {{ advert.title }}
-        </a>
+        <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}" width="200px" height="80px">
+        <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">  {{ advert.title }}  </a>
         par {{ advert.author }},
         le {{ advert.date|date('d/m/Y') }}
       </li>
-    {% else %}
-      <li>Pas (encore !) d'annonces</li>
+    
     {% endfor %}
+  </ul>
+
+  <ul class="pagination">
+    {% for i in 1..page %}
+      <li{% if i == page %} class="active"{% endif %}>
+        <a href="{{ path('oc_platform_home', {'page': page})}} ">{{page}}</a>
+      </li>
+    {% endfor %}
+    
   </ul>
 
 {% endblock %}

@@ -19,37 +19,26 @@ class AdvertController extends Controller
     // On ne sait pas combien de pages il y a
     // Mais on sait qu'une page doit être supérieure ou égale à 1
     if ($page < 1) {
-      // On déclenche une exception NotFoundHttpException, cela va afficher
-      // une page d'erreur 404 (qu'on pourra personnaliser plus tard d'ailleurs)
       throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
     }
 
-    // Ici, on récupérera la liste des annonces, puis on la passera au template
+    // Ici, on récupérer la liste des annonces
 
-     // Notre liste d'annonce en dur
-    $listAdverts = array(
-      array(
-        'title'   => 'Recherche développpeur Symfony',
-        'id'      => 1,
-        'author'  => 'Alexandre',
-        'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-        'date'    => new \Datetime()),
-      array(
-        'title'   => 'Mission de webmaster',
-        'id'      => 2,
-        'author'  => 'Hugo',
-        'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-        'date'    => new \Datetime()),
-      array(
-        'title'   => 'Offre de stage webdesigner',
-        'id'      => 3,
-        'author'  => 'Mathieu',
-        'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-        'date'    => new \Datetime())
-    );
+    $em = $this->getDoctrine()->getManager();
+    //$listAdverts = $em->getRepository('OCPlatformBundle:Advert')->findAll();
+    $nbPerPage = 5;
+    $listAdverts = $em->getRepository('OCPlatformBundle:Advert')->getAdverts($page, $nbPerPage); // utilisation d'une méthode perso
 
-    // Mais pour l'instant, on ne fait qu'appeler le template
-    return $this->render('OCPlatformBundle:Advert:index.html.twig', array('listAdverts' => $listAdverts));
+    $nbPages = ceil(count($listAdverts) / $nbPerPage);
+
+    if ($page > $nbPages) {
+      throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
+    }
+
+    return $this->render('OCPlatformBundle:Advert:index.html.twig', array(
+        'listAdverts' => $listAdverts,
+        'nbPages' => $nbPages,
+        'page' => $page));
   }
 
   public function viewAction($id)
@@ -193,15 +182,6 @@ class AdvertController extends Controller
       return $this->redirectToRoute('oc_platform_view', array('id' => 5));
     }
 
-    $advert = array(
-      'title'   => 'Recherche développpeur Symfony',
-      'id'      => $id,
-      'author'  => 'Alexandre',
-      'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-      'date'    => new \Datetime()
-    );
-
-
     return $this->render('OCPlatformBundle:Advert:edit.html.twig', array('advert' =>$advert));
   }
 
@@ -234,18 +214,14 @@ class AdvertController extends Controller
 
   public function menuAction($limit)
   {
-    // On fixe en dur une liste ici, bien entendu par la suite
-    // on la récupérera depuis la BDD !
-    $listAdverts = array(
-      array('id' => 2, 'title' => 'Recherche développeur Symfony'),
-      array('id' => 5, 'title' => 'Mission de webmaster'),
-      array('id' => 9, 'title' => 'Offre de stage webdesigner')
-    );
+    $em = $this->getDoctrine()->getManager();
 
-    return $this->render('OCPlatformBundle:Advert:menu.html.twig', array(
-      // Tout l'intérêt est ici : le contrôleur passe
-      // les variables nécessaires au template !
-      'listAdverts' => $listAdverts
-    ));
+    $listAdverts = $em->getRepository('OCPlatformBundle:Advert')->findBy(
+        array(),
+        array('date' => 'DESC'),
+        $limit,
+        0);
+
+    return $this->render('OCPlatformBundle:Advert:menu.html.twig', array('listAdverts' => $listAdverts));
   }
 }
