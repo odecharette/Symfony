@@ -26,12 +26,12 @@ class AdvertController extends Controller
 
     $em = $this->getDoctrine()->getManager();
     //$listAdverts = $em->getRepository('OCPlatformBundle:Advert')->findAll();
-    $nbPerPage = 5;
+    $nbPerPage = 3;
     $listAdverts = $em->getRepository('OCPlatformBundle:Advert')->getAdverts($page, $nbPerPage); // utilisation d'une méthode perso
 
     $nbPages = ceil(count($listAdverts) / $nbPerPage);
 
-    if ($page > $nbPages) {
+    if ($page > $nbPages AND $page>1) {
       throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
     }
 
@@ -223,5 +223,18 @@ class AdvertController extends Controller
         0);
 
     return $this->render('OCPlatformBundle:Advert:menu.html.twig', array('listAdverts' => $listAdverts));
+  }
+
+  public function purgeAction($days, Request $request)
+  {
+    //call le service de purge
+    $em = $this->getDoctrine()->getManager();
+    $purge = $this->container->get('oc_platform.purger.advert');
+    $purge->purge($em, $days);
+
+    $request->getSession()->getFlashBag()->add('danger','Purge bien effectuée');
+
+    return $this->redirectToRoute('oc_platform_home', array('page' => 1));
+
   }
 }

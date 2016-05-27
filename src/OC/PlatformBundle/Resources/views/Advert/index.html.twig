@@ -4,27 +4,50 @@
 
 {% block ocplatform_body %}
 
-  <h2>Liste des annonces</h2>
-
-  <ul>
-    {% for advert in listAdverts %}
-      <li>
-        <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}" width="200px" height="80px">
-        <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">  {{ advert.title }}  </a>
-        par {{ advert.author }},
-        le {{ advert.date|date('d/m/Y') }}
-      </li>
-    
+{% if listAdverts.count > 0 %}
+  <div class="row">
+    {% for advert in listAdverts %}   
+      <div class="col-sm-6 col-md-4">
+        <div class="thumbnail">
+          <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
+          <div class="caption">
+            <h4>{{ advert.title }}</h4>
+            <p>par {{ advert.author }},
+               le {{ advert.date|date('d/m/Y') }}</p>
+            <p>
+              {% for category in advert.categories %}
+                <span class="label label-pill label-primary">{{ category.name }}</span>
+              {% endfor %}
+            </p>
+            <p><a href="{{ path('oc_platform_view', {'id': advert.id}) }}" class="btn btn-info" role="button">Voir plus</a></p>
+          </div>
+        </div>
+      </div>
     {% endfor %}
-  </ul>
-
+  </div>
   <ul class="pagination">
-    {% for i in 1..page %}
+    <li>
+      {% if page>1 %} 
+        <a href="{{ path('oc_platform_home', {'page': page-1 })}} " aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+      {% else %}
+        <a href="{{ path('oc_platform_home', {'page': 1 })}} " aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+      {% endif %}
+    </li>
+    {% for i in 1..nbPages %}
       <li{% if i == page %} class="active"{% endif %}>
-        <a href="{{ path('oc_platform_home', {'page': page})}} ">{{page}}</a>
+        <a href="{{ path('oc_platform_home', {'page': i})}} ">{{i}}</a>
       </li>
     {% endfor %}
-    
+    <li>
+      {% if page < nbPages %}
+        <a href="{{ path('oc_platform_home', {'page': page+1})}} " aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+      {% else %}
+        <a href="{{ path('oc_platform_home', {'page': nbPages})}} " aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+      {% endif %}
+    </li>
   </ul>
+{% else %}
+  <p>Aucune annonce pour le moment</p>
+{% endif %}
 
 {% endblock %}

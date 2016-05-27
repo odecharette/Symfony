@@ -54,4 +54,16 @@ class AdvertRepository extends \Doctrine\ORM\EntityRepository
         return $paginator;
     }
 
+    public function getAdvertsToPurge($days)
+    {
+    	//$today = new\DateTime();
+		$dateToDelete = date('Y-m-d', strtotime('-'.$days.'days'));
+
+    	$qb = $this->createQueryBuilder('a');
+		$qb->where('a.applications IS EMPTY');
+		$qb->andwhere('a.updatedAt < \'' . $dateToDelete . '\'');
+
+		return $qb->getQuery()->getResult();
+    }
+
 }

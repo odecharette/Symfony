@@ -23,8 +23,7 @@ class LoadCategory implements FixtureInterface
 
     foreach ($names as $name) {
       // On crée la catégorie
-      $category = new Category();
-      $category->setName($name);
+      $category = new Category($name);
 
       // On la persiste
       $manager->persist($category);

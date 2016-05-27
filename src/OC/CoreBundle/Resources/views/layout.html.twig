@@ -16,24 +16,32 @@
 
 <body>
   <div class="container">
-    <div id="header" class="jumbotron">
-      <h1>Ma plateforme d'annonces</h1>
-      <p>
-        Ce projet est propulsé par Symfony,
-        et construit grâce au MOOC OpenClassrooms et SensioLabs.
-      </p>
-      <p>
-        <a class="btn btn-primary btn-lg" href="https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-symfony2">
-          Participer au MOOC »
-        </a>
-      </p>
+    <div id="header" class="page-header">
+      <h1>Ma plateforme d'annonces <br>
+        <small>Ce projet est propulsé par Symfony, et construit grâce au <a href="https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-symfony2">MOOC OpenClassrooms et SensioLabs.</a></small>
+		</h1>
+      <a href="{{ path('oc_platform_purge', {'days': 10}) }}" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-trash"></span> Purger</a>
     </div>
+
+    
+    {% for label, flashes in app.session.flashbag.all %}
+      {% for flash in flashes %}
+          <div class="alert alert-{{label}} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert">
+              <span aria-hidden="true">&times;</span>
+              <span class="sr-only">X</span>
+          </button>
+              {{ flash }}
+          </div>
+      {% endfor %}
+    {% endfor %}
 
     <div class="row">
       <div id="menu" class="col-md-3">
         <h3>Les annonces</h3>
         <ul class="nav nav-pills nav-stacked">
           <li><a href="{{ path('oc_core_homepage') }}">Accueil</a></li>
+          <li><a href="{{ path('oc_platform_home', {'page': 1}) }}">Liste des annonces</a></li>
           <li><a href="{{ path('oc_platform_add') }}">Ajouter une annonce</a></li>
         </ul>
 
